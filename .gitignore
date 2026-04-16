@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+
+# MiniBank runtime data (generated on first run — not part of source)
+users.json
+users_fixed.json
+bank.log
+bank_fixed.log
+*.log.tmp
+
+# Fuzzer scratch files
+fuzz_run*.txt
+fuzz_stdout.txt
+
+# Word lock files
+~$*.docx
+
+# Environment
+.env
+.venv/
+venv/

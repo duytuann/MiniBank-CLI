@@ -1,0 +1,29 @@
+============================================================
+MiniBank Fuzz Testing Report
+Generated: 2026-04-16T15:26:43.685664
+Iterations: 10000
+Targets: login, deposit, withdraw, transfer
+============================================================
+
+No crashes detected after 10000 iterations.
+
+The input validation in minibank_fixed.py successfully
+handled all mutated inputs without raising unhandled
+exceptions. Specifically:
+  - NaN, Inf, -Inf amounts were rejected by validate_amount()
+  - Negative amounts were rejected (must be > 0)
+  - Empty strings / None usernames handled gracefully
+  - Log-injection strings were sanitized before writing
+  - String amounts converted/rejected without crashing
+
+Fuzzer Methodology
+------------------
+Approach   : Pure-Python genetic algorithm fuzzer
+Seed corpus: Boundary strings, special chars, SQL injection,
+             log-injection payloads, NaN/Inf numbers,
+             large/small floats, empty/null inputs
+Mutations  : bit-flip, insert special char, inject newline,
+             truncate, duplicate, negate, boundary push
+Iterations : 10000
+Population : 40 seeds
+Mutation rate: 30%

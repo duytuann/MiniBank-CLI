@@ -21,15 +21,15 @@ A Python command-line banking application built for a Software Security Engineer
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| Register | Create a new account; password is hashed before storage |
-| Login | Authenticate with username and password; account locks after 3 failed attempts |
-| Deposit | Credit a positive amount to your balance |
-| Withdraw | Debit a positive amount; rejects overdrafts |
-| Transfer | Move funds to another registered account |
-| History | View a timestamped ledger of all your transactions |
-| Audit log | Every operation is appended to `bank_fixed.log` |
+| Feature   | Description                                                                    |
+| --------- | ------------------------------------------------------------------------------ |
+| Register  | Create a new account; password is hashed before storage                        |
+| Login     | Authenticate with username and password; account locks after 3 failed attempts |
+| Deposit   | Credit a positive amount to your balance                                       |
+| Withdraw  | Debit a positive amount; rejects overdrafts                                    |
+| Transfer  | Move funds to another registered account                                       |
+| History   | View a timestamped ledger of all your transactions                             |
+| Audit log | Every operation is appended to `bank_fixed.log`                                |
 
 ---
 
@@ -37,16 +37,17 @@ A Python command-line banking application built for a Software Security Engineer
 
 ```
 sse_final_project/
-├── minibank.py            # Original app — intentionally vulnerable (educational)
-├── minibank_fixed.py      # Hardened app — all vulnerabilities resolved
-├── test_minibank.py       # 5 pytest black-box test cases (TC-01 … TC-05)
-├── fuzz_minibank.py       # Pure-Python genetic algorithm fuzzer (10 000 iterations)
-├── auth_model.pml         # Promela model for SPIN model checker
-├── bandit_report.txt      # Bandit SAST output on the original version
-├── bandit_report_fixed.txt# Bandit output on the fixed version (0 issues)
-├── generate_report.py     # Script that produces security_report.docx
-├── security_report.docx   # Full academic security analysis report
-└── README.md              # This file
+├── minibank.py             # Original app — intentionally vulnerable (educational)
+├── minibank_fixed.py       # Hardened app — all vulnerabilities resolved
+├── test_minibank.py        # 5 pytest black-box test cases (TC-01 … TC-05)
+├── fuzz_minibank.py        # Pure-Python genetic algorithm fuzzer (10 000 iterations)
+├── auth_model.pml          # Promela model for SPIN model checker
+├── bandit_report.txt       # Bandit SAST output on the original version
+├── bandit_report_fixed.txt # Bandit output on the fixed version (0 issues)
+├── fuzz_report.txt         # Fuzzer results — 10 000 iterations, 0 crashes
+├── generate_report.py      # Script that produces security_report.docx
+├── security_report.docx    # Full academic security analysis report
+└── README.md               # This file
 ```
 
 ---
@@ -205,10 +206,10 @@ do not persist across restarts, which is acceptable for a CLI application).
 
 ### Data files
 
-| File | Purpose |
-|------|---------|
+| File               | Purpose                                                        |
+| ------------------ | -------------------------------------------------------------- |
 | `users_fixed.json` | User accounts, hashed passwords, balances, transaction history |
-| `bank_fixed.log` | Append-only audit log of every operation |
+| `bank_fixed.log`   | Append-only audit log of every operation                       |
 
 Both files are created automatically on first run in the current working directory.
 
@@ -233,12 +234,12 @@ test_minibank.py::test_tc05_transfer_nonexistent_recipient PASSED
 5 passed in ~2s
 ```
 
-| ID | What is tested |
-|----|----------------|
-| TC-01 | Wrong password → graceful failure, no crash |
-| TC-02 | Withdraw > balance → overdraft rejected |
-| TC-03 | Deposit negative amount → rejected |
-| TC-04 | 3 failed logins → account locked |
+| ID    | What is tested                                          |
+| ----- | ------------------------------------------------------- |
+| TC-01 | Wrong password → graceful failure, no crash             |
+| TC-02 | Withdraw > balance → overdraft rejected                 |
+| TC-03 | Deposit negative amount → rejected                      |
+| TC-04 | 3 failed logins → account locked                        |
 | TC-05 | Transfer to nonexistent user → error, balance unchanged |
 
 ---
@@ -271,13 +272,13 @@ Report written to fuzz_report.txt
 
 ### What was fixed (`minibank.py` → `minibank_fixed.py`)
 
-| # | Weakness | CWE | Fix |
-|---|----------|-----|-----|
-| 1 | MD5 password hashing | CWE-327 | bcrypt / PBKDF2-HMAC-SHA256 (260 000 rounds) |
-| 2 | Log injection via unsanitised input | CWE-117 | `sanitize_for_log()` strips control chars and non-ASCII |
-| 3 | No amount validation (negative amounts) | CWE-20 | `validate_amount()` enforces `amount > 0`, non-NaN, finite |
-| 4 | Hardcoded secret key | CWE-259 | `os.environ.get("MINIBANK_SECRET_KEY", secrets.token_hex(32))` |
-| 5 | File I/O without explicit encoding (fuzzer finding) | CWE-116 | All `open()` calls use `encoding="utf-8"` |
+| #   | Weakness                                            | CWE     | Fix                                                            |
+| --- | --------------------------------------------------- | ------- | -------------------------------------------------------------- |
+| 1   | MD5 password hashing                                | CWE-327 | bcrypt / PBKDF2-HMAC-SHA256 (260 000 rounds)                   |
+| 2   | Log injection via unsanitised input                 | CWE-117 | `sanitize_for_log()` strips control chars and non-ASCII        |
+| 3   | No amount validation (negative amounts)             | CWE-20  | `validate_amount()` enforces `amount > 0`, non-NaN, finite     |
+| 4   | Hardcoded secret key                                | CWE-259 | `os.environ.get("MINIBANK_SECRET_KEY", secrets.token_hex(32))` |
+| 5   | File I/O without explicit encoding (fuzzer finding) | CWE-116 | All `open()` calls use `encoding="utf-8"`                      |
 
 ### Known remaining limitations
 
@@ -289,10 +290,8 @@ Report written to fuzz_report.txt
 
 ## Project Files
 
-| File | Description |
-|------|-------------|
-| `security_report.docx` | 8-section academic report covering all four analysis methods |
-| `bandit_report.txt` | Raw Bandit SAST output for the original version (3 findings) |
-| `bandit_report_fixed.txt` | Bandit output for the fixed version (0 findings) |
-| `auth_model.pml` | Promela FSM model; verifies two LTL safety properties with SPIN |
-| `generate_report.py` | Regenerates `security_report.docx` from source (requires `python-docx`) |
+| File                      | Description                                                     |
+| ------------------------- | --------------------------------------------------------------- |
+| `bandit_report.txt`       | Raw Bandit SAST output for the original version (3 findings)    |
+| `bandit_report_fixed.txt` | Bandit output for the fixed version (0 findings)                |
+| `auth_model.pml`          | Promela FSM model; verifies two LTL safety properties with SPIN |
